@@ -1,0 +1,5 @@
+.git
+.env
+mysql-init/
+postgres-init/
+prod-postgres-init/

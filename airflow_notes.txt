@@ -1,0 +1,5 @@
+### How to run airflow docker locally Astro
+https://medium.com/@pyramidofmerlin/how-to-maker-airflow-be-able-to-manage-files-in-your-local-computer-371ded7d0804 
+
+1. astro dev object export --compose --> creating compose.yaml
+2. astro dev start --compose-file docker-compose.override.yaml 

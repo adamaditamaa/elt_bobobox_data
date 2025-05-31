@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password --skip-ssl
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    networks:
+      - db_network
+
+  postgresql:
+    image: postgres:15
+    container_name: postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    networks:
+      - db_network
+
+  prod-postgres:
+    image: postgres:15
+    container_name: prod_postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PROD_POSTGRES_DB}
+      POSTGRES_USER: ${PROD_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${PROD_POSTGRES_PASSWORD}
+    ports:
+      - "5431:5432"
+    volumes:
+      - prod_postgres_data:/var/lib/postgresql/data
+      - ./prod-postgres-init:/docker-entrypoint-initdb.d
+    networks:
+      - db_network
+
+  metabase-postgres:
+    image: postgres:15
+    container_name: metabase_postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${METABASE_POSTGRES_DB}
+      POSTGRES_USER: ${METABASE_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${METABASE_POSTGRES_PASSWORD}
+    ports:
+      - "5333:5432" 
+    volumes:
+      - metabase_postgres_data:/var/lib/postgresql/data
+    networks:
+      - db_network
+
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: ${METABASE_POSTGRES_DB}
+      MB_DB_PORT: 5432
+      MB_DB_USER: ${METABASE_POSTGRES_USER}
+      MB_DB_PASS: ${METABASE_POSTGRES_PASSWORD}
+      MB_DB_HOST: metabase-postgres
+      MB_ADMIN_EMAIL: ${METABASE_ADMIN_EMAIL}
+      MB_ADMIN_FIRST_NAME: ${METABASE_ADMIN_FIRST_NAME}
+      MB_ADMIN_LAST_NAME: ${METABASE_ADMIN_LAST_NAME}
+      MB_ADMIN_PASSWORD: ${METABASE_ADMIN_PASSWORD}
+    depends_on:
+      - metabase-postgres
+    networks:
+      - db_network
+    volumes:
+      - metabase_data:/metabase-data
+
+  
+
+
+volumes:
+  mysql_data:
+    driver: local
+  postgres_data:
+    driver: local
+  metabase_postgres_data:
+    driver: local
+  metabase_data:
+    driver: local
+  prod_postgres_data:
+    driver: local
+
+networks:
+  db_network:
+    driver: bridge

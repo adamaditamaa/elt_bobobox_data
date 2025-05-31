@@ -1,0 +1,20 @@
+# Astro Runtime includes the following pre-installed providers packages: https://docs.astronomer.io/astro/runtime-image-architecture#provider-packages
+astronomer-cosmos
+dbt-core
+protobuf
+numpy==1.23.5
+pandas==2.0.0
+pyarrow==14.0.2
+Requests==2.31.0
+pygsheets==2.0.6
+boto3==1.26.75
+smart-open==6.4.0
+urllib3==1.26.14
+SQLAlchemy==1.4.51
+mysql-connector-python==8.0.32
+sshtunnel
+openpyxl
+regex
+discord-webhook
+apache-airflow-providers-airbyte[http]
+apache-airflow-providers-airbyte
